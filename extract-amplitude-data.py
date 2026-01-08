@@ -4,8 +4,7 @@ import os
 from datetime import datetime, timedelta
 import time
 import logging
-import zipfile
-import gzip
+from modules import unzip_and_store
 
 # Creating logs directory if it does not exist
 
@@ -68,8 +67,7 @@ response = requests.get(url, params=params, auth=(api_key, secret_key))
 #Error handling
 
 response_code=response.status_code
-
-
+destination_filepath = "data/amplitude_data.zip"
 
 number_tries=0
 
@@ -80,11 +78,13 @@ while number_tries<3:
         data = response.content 
         print('Data retrieved successfully.')
         # JSON data files saved to a zip folder 'data.zip'
-        with open(f'amplitude_data_{start}_{end}.zip', 'wb') as file:
+        with open(destination_filepath, 'wb') as file:
             file.write(data)
 
             print(f'Download successful lets goooo ☘️')
-            logger.info(f'Download successful ☘️, stored as amplitude_data_{start}_{end}.zip') 
+            logger.info(f'Download successful ☘️, stored as amplitude_data.zip') 
+
+        unzip_and_store(destination_filepath)
 
         break
 
