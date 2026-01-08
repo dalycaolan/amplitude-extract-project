@@ -1,3 +1,10 @@
+data
+.env
+logs
+amplitude_data*.zip
+*.zip
+json_data
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
