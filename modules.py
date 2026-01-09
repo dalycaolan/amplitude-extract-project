@@ -2,17 +2,18 @@ import os
 import zipfile     
 import gzip        
 import shutil     
-import tempfile  
+import tempfile
+from datetime import datetime  
 
 # Create a temporary directory for extraction
 
 def unzip_and_store(file_path):
 
     temp_dir = tempfile.mkdtemp()
-
+    file_date = datetime.now().strftime('%Y%m%dT%H-%M-%S')
     # Create local output directory
 
-    data_dir = "json_data"
+    data_dir = f"json_data/{file_date}"
     os.makedirs(data_dir, exist_ok=True)
 
     with zipfile.ZipFile(file_path, "r") as zip_ref:

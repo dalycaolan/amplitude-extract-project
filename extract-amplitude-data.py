@@ -65,9 +65,10 @@ params = {
 response = requests.get(url, params=params, auth=(api_key, secret_key))
 
 #Error handling
-
 response_code=response.status_code
-destination_filepath = "data/amplitude_data.zip"
+destination_pf = f'data/'
+destination_filepath = f"{destination_pf}amplitude_data.zip"
+json_filepath = f'{destination_pf}json_data'
 
 number_tries=0
 
@@ -82,14 +83,17 @@ while number_tries<3:
             file.write(data)
 
             print(f'Download successful lets goooo ☘️')
-            logger.info(f'Download successful ☘️, stored as amplitude_data.zip') 
-
-        unzip_and_store(destination_filepath)
-
+            logger.info(f'Download successful ☘️, storing as amplitude_data.zip') 
+        
+            unzip_and_store(destination_filepath)
+            print('Storage successfull lets gooo ☘️ ☘️')
+            logger.info(f'Unzipping and storage successful, loaded into {json_filepath} ☘️☘️')
+    
         break
 
     elif response_code<200 and response_code>499:
         
+        # Print response reason and try again
         print(response.reason)
         time.sleep(10)
         logger.warning(response.reason) 
@@ -98,6 +102,7 @@ while number_tries<3:
 
 
     else:
+        
         # The request failed; print the error
         print(f'Error {response_code}: {response.text}')
 
