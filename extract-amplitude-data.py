@@ -23,7 +23,12 @@ logging.basicConfig(
     filename=log_filename
 )
 
+
 logger=logging.getLogger()
+
+file_handler = logging.FileHandler(log_filename)
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+logger.addHandler(file_handler)
 
 # For easy copying and pasting
 
@@ -40,7 +45,6 @@ load_dotenv()
 api_key=os.getenv('AMP_API_KEY')
 secret_key= os.getenv('AMP_SECRET_KEY')
 amp_region=os.getenv('AMP_DATA_REGION')
-
 
 logger.info('Credentials loaded in')
 
@@ -66,20 +70,20 @@ params = {
 logger.info('Parameters defined')
 
 
-# Make the GET request with basic authentication
-response = requests.get(url, params=params, auth=(api_key, secret_key))
-
-#Error handling
-response_code=response.status_code
-destination_pf = f'data/'
-
-file_date = datetime.now().strftime('%Y%m%dT%H-%M-%S')
-destination_filepath = f"{destination_pf}amplitude_data_{file_date}.zip"
-json_filepath = f'json_data/{file_date}'
-
 number_tries=0
 
 while number_tries<3:
+
+    # Make the GET request with basic authentication
+    response = requests.get(url, params=params, auth=(api_key, secret_key))
+
+#Error handling
+    response_code=response.status_code
+    destination_pf = f'data/'
+
+    file_date = datetime.now().strftime('%Y%m%dT%H-%M-%S')
+    destination_filepath = f"{destination_pf}amplitude_data_{file_date}.zip"
+    json_filepath = f'json_data/{file_date}'
 
     logger.info('Attempting API request...')
 
