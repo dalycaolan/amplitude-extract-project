@@ -85,9 +85,13 @@ while number_tries<3:
             print(f'Download successful lets goooo ☘️')
             logger.info(f'Download successful ☘️, storing as amplitude_data.zip') 
         
-            unzip_and_store(destination_filepath)
-            print('Storage successfull lets gooo ☘️ ☘️')
-            logger.info(f'Unzipping and storage successful, loaded into {json_filepath} ☘️☘️')
+            try:
+                unzip_and_store(destination_filepath)
+                print('Storage successfull lets gooo ☘️ ☘️')
+                logger.info(f'Unzipping and storage successful, loaded into {json_filepath} ☘️☘️')
+            except:
+                with Exception as e:
+                    logger.warning(f'Unzipping and storage successful, loaded into {json_filepath} ☘️☘️')
     
         break
 
