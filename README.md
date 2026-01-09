@@ -1,6 +1,6 @@
 # Amplitude Extract Project
 
-## Introduction
+## Introduction 👋
 
 This project aims to walk through extraction of data from an Amplitude API and loading of this into local storage.
 
