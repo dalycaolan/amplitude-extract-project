@@ -41,6 +41,9 @@ api_key=os.getenv('AMP_API_KEY')
 secret_key= os.getenv('AMP_SECRET_KEY')
 amp_region=os.getenv('AMP_DATA_REGION')
 
+
+logger.info('Credentials loaded in')
+
 #Create start and end date dynamically, end date yesterday and roll back seven days
 
 end_date = datetime.now() - timedelta(days=1)
@@ -60,6 +63,8 @@ params = {
     'end': end
 }
 
+logger.info('Parameters defined')
+
 
 # Make the GET request with basic authentication
 response = requests.get(url, params=params, auth=(api_key, secret_key))
@@ -67,41 +72,47 @@ response = requests.get(url, params=params, auth=(api_key, secret_key))
 #Error handling
 response_code=response.status_code
 destination_pf = f'data/'
-destination_filepath = f"{destination_pf}amplitude_data.zip"
-json_filepath = f'{destination_pf}json_data'
+
+file_date = datetime.now().strftime('%Y%m%dT%H-%M-%S')
+destination_filepath = f"{destination_pf}amplitude_data_{file_date}.zip"
+json_filepath = f'json_data/{file_date}'
 
 number_tries=0
 
 while number_tries<3:
 
+    logger.info('Attempting API request...')
+
     if response_code == 200:
+
         # The request was successful
+
         data = response.content 
-        print('Data retrieved successfully.')
+        logger.info('Data retrieved successfully. Attempting to zip.')
         # JSON data files saved to a zip folder 'data.zip'
         with open(destination_filepath, 'wb') as file:
             file.write(data)
 
             print(f'Download successful lets goooo ☘️')
-            logger.info(f'Download successful ☘️, storing as amplitude_data.zip') 
+            logger.info(f'Download successful, storing as amplitude_data_{file_date}.zip') 
         
             try:
-                unzip_and_store(destination_filepath)
+                unzip_and_store(destination_filepath, file_date)
                 print('Storage successfull lets gooo ☘️ ☘️')
-                logger.info(f'Unzipping and storage successful, loaded into {json_filepath} ☘️☘️')
+                logger.info(f'Unzipping and storage successful, loaded into {json_filepath}')
             except:
                 with Exception as e:
-                    logger.warning(f'Unzipping and storage successful, loaded into {json_filepath} ☘️☘️')
+                    logger.warning(f'Unzipping unsuccessful :(')
     
         break
 
     elif response_code<200 and response_code>499:
         
         # Print response reason and try again
-        print(response.reason)
-        time.sleep(10)
+        
         logger.warning(response.reason) 
-
+        time.sleep(10)
+    
         count+=1
 
 
@@ -109,6 +120,7 @@ while number_tries<3:
         
         # The request failed; print the error
         print(f'Error {response_code}: {response.text}')
+        logger.error(f'Error {response_code}: {response.text}')
 
         break
 

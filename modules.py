@@ -3,20 +3,23 @@ import zipfile
 import gzip        
 import shutil     
 import tempfile
-from datetime import datetime  
+from datetime import datetime
+import logger  
 
 # Create a temporary directory for extraction
 
-def unzip_and_store(file_path):
+def unzip_and_store(file_path, file_date):
 
     temp_dir = tempfile.mkdtemp()
-    file_date = datetime.now().strftime('%Y%m%dT%H-%M-%S')
+    # logger.info('Temporary directory made')
+
     # Create local output directory
 
     data_dir = f"json_data/{file_date}"
     os.makedirs(data_dir, exist_ok=True)
 
     with zipfile.ZipFile(file_path, "r") as zip_ref:
+        # logger.info('Extracting gzip files...')
         zip_ref.extractall(temp_dir)
 
     day_folder = next(f for f in os.listdir(temp_dir) if f.isdigit())
@@ -36,3 +39,5 @@ def unzip_and_store(file_path):
                     shutil.copyfileobj(gz_file, out_file)
 
     shutil.rmtree(temp_dir)
+
+    # logger.info('gzip files succesfully parsed into JSON and loaded successfully :)')
