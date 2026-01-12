@@ -3,9 +3,6 @@ import zipfile
 import gzip        
 import shutil     
 import tempfile
-from datetime import datetime
-import logger  
-
 # Create a temporary directory for extraction
 
 def unzip_and_store(file_path, file_date):
