@@ -25,8 +25,9 @@ s3_client = boto3.client(
 
 # Extract the main zip file
 # zip_path = "data.zip"
-output_folder = "json_data"
 # unzip_and_store(zip_path,output_folder) 
+
+output_folder = "json_data"
 
 files_to_upload = []
 for root, dirs, filenames in os.walk(output_folder):
