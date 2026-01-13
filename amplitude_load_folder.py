@@ -4,7 +4,6 @@
 import os
 import boto3
 from dotenv import load_dotenv
-from modules.extract_json import unzip_and_store
 from pathlib import Path
 
 # Load .env file

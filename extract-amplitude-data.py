@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta
 import time
 import logging
-from modules.extract_json import unzip_and_store
+from modules.extract_json import unzip_and_store, extract_function, load_data
 import boto3
 
 # Creating logs directory if it does not exist
@@ -72,28 +72,32 @@ start_date = datetime.now() - timedelta(days=7)
 start = start_date.strftime('%Y%m%d')+'T00'
 
 
-response = s3_client.list_objects_v2(Bucket=aws_bucket_name)
+# response = s3_client.list_objects_v2(Bucket=aws_bucket_name)
 
 # Extract the 'Contents' key which contains the object metadata
-list_of_jsons=[]
-if 'Contents' in response:
-    for obj in response['Contents']:
-        list_of_jsons.append(obj['Key'].replace('python-import/',''))
-else:
-    print("Bucket is empty or does not exist.")
+# list_of_jsons=[]
+# if 'Contents' in response:
+#     for obj in response['Contents']:
+#         list_of_jsons.append(obj['Key'].replace('python-import/',''))
+# else:
+#     print("Bucket is empty or does not exist.")
 
-print(list_of_jsons)
+# print(list_of_jsons)
 
 # boto3.list_s3_objects(aws_bucket_name)
 
-# # API endpoint is the EU residency server
-# url = 'https://analytics.eu.amplitude.com/api/2/export'
-# params = {
-#     'start': start,
-#     'end': end
-# }
+# API endpoint is the EU residency server
+url = 'https://analytics.eu.amplitude.com/api/2/export'
+params = {
+    'start': start,
+    'end': end
+}
 
-# logger.info('Parameters defined')
+logger.info('Parameters defined')
+
+extract_function(params, url, api_key,secret_key)
+
+load_data()
 
 
 # number_tries=0
