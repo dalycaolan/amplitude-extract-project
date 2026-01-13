@@ -39,6 +39,76 @@ If the request is successful, we will download the data as a ZIP file and then t
 
 Define a separate modules.py script in order to keep our extraction script concise. Please follow this script to see how the function is defined. We will create a directory to unzip and store our JSON files. In order to do this, we will create a temporary directory to initially unzip our file, and then from there unzip it again to find our event data JSONs and put them in the correct folder.
 
+# Data Pipeline: AWS to Snowflake Integration
+
+This project outlines a robust data engineering pipeline designed to ingest JSON data into an AWS S3 bucket via Python and integrate it seamlessly into a Snowflake data warehouse using Storage Integrations.
+
+---
+
+## 🏗️ 4. AWS Configuration
+
+The foundation of the pipeline requires a secure and well-permissioned AWS environment.
+
+- **KMS & S3 Setup**
+  - Create a specialized **KMS Key** for encryption.
+  - Provision an **S3 Bucket** with strict security:
+    - Block Public Access
+    - Disable ACLs
+    - Encrypt with KMS
+- **IAM Policies**
+  - **For Load:** Create Policy, Create User, Attach Policy to user, and record Access ID/Secret.
+  - **For Storage Integration:** Create Role and Attach Policy to Role.
+
+---
+
+## 🐍 5. Python Loading Process
+
+This stage handles local data orchestration and transfer to the cloud.
+
+- **Set Up Credentials**
+  - Create a `.env` file to store `aws_key`, `secret`, `region`, and `bucket_name`.
+- **Write Load Function**
+  - **Folder Traversal:** Walk through `json_data` folder using nested for-loops to look in subfolders.
+  - **Path Management:** Create full file paths and parse destination file paths for S3.
+
+---
+
+## ❄️ 6. Snowflake Integration
+
+Connecting the S3 data lake to the Snowflake warehouse for analysis.
+
+- **Schema & Storage Integration**
+  - Create Schema.
+  - **Storage Integration Setup:** \* Create Role and Policy in AWS.
+    - Create Storage Integration object in Snowflake and note key details.
+    - Update the AWS Role **Trust Relationship**.
+- **Data Ingestion**
+  - Create **External Stage**.
+  - Create target **Table**.
+  - Execute **Load into table**.
+
+---
+
+## 🚀 Further Developments
+
+### 🔄 Incremental Refresh
+
+_Goal: Fill in gaps to make data more recent._
+
+1.  Create a list of JSONs and convert to **datetime**.
+2.  Find the **most recent datetime**.
+3.  Set this as the **start time** for the API call.
+4.  Unzip and store as normal.
+
+### 🔍 Fill In Missing Gaps
+
+_Goal: Ensure data completeness._
+
+1.  Generate a list of files currently in the S3 bucket.
+2.  After unzipping gzips, iterate through:
+    - **If file already there:** Don't extract into `json_data` folder.
+    - **If file not there:** Load in.
+
 ## Contributions 📔
 
 Contributions are welcome! Please feel free to submit a Pull Request.
