@@ -89,7 +89,7 @@ def extract_function(params, url, api_key,secret_key, count=0 ):
                         logger.warning(f'Unzipping unsuccessful :(')
             break
 
-        elif response_code<200 and response_code>499:
+        elif (response_code<200 and response_code>499) or response_code==429:
             
             # Print response reason and try again
             
