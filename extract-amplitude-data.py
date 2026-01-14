@@ -68,7 +68,7 @@ end_date = datetime.now() - timedelta(days=1)
 end = end_date.strftime('%Y%m%d')+'T00'
 
 
-start_date = datetime.now() - timedelta(days=7)
+start_date = datetime.now() - timedelta(hours=1)
 start = start_date.strftime('%Y%m%d')+'T00'
 
 

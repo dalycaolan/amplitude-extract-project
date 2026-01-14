@@ -143,3 +143,4 @@ def load_data():
         output_path = file
         s3_client.upload_file(output_path, aws_bucket_name, aws_file_destination)
         print(f"✓ Uploaded: {file}, name is {aws_file_destination}")
+        os.remove(file)
