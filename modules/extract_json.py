@@ -129,8 +129,8 @@ def load_data():
     # zip_path = "data.zip"
     # unzip_and_store(zip_path,output_folder) 
 
+    os.makedirs("json_data", exist_ok=True) 
     output_folder = "json_data"
-
     files_to_upload = []
     for root, _, filenames in os.walk(output_folder):
         for filename in filenames:
