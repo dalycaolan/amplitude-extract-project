@@ -89,6 +89,71 @@ Connecting the S3 data lake to the Snowflake warehouse for analysis.
 
 ---
 
+## 🏗️ Orchestration with Kestra
+
+While the Python scripts handle the core logic of **Extracting** from Amplitude and **Loading** to AWS S3, we use **Kestra** to orchestrate the entire lifecycle. This ensures the pipeline is scheduled, observable, and handles environment dependencies automatically.
+
+### Workflow Architecture
+
+The orchestration flow (`amplitude.yaml`) manages the following lifecycle within a unified `WorkingDirectory`:
+
+1. **Environment Setup**: Clones the specific branch (`modularising-script`) from GitHub.
+2. **Dependency Management**: Dynamically installs required libraries via `pip`.
+3. **Execution**: Passes secure credentials from Kestra's KV store into the Python environment.
+4. **Logging**: Captures stdout/stderr for real-time monitoring of the ETL process.
+
+### Required Secrets (KV Store)
+
+To run this pipeline, the following keys must be configured in your Kestra namespace (`des.amplitude`). This prevents sensitive credentials from being hardcoded in the source code:
+
+| Category      | Key                                | Description                            |
+| :------------ | :--------------------------------- | :------------------------------------- |
+| **GitHub**    | `github_user`, `github_token`      | Authentication for repository cloning. |
+| **Amplitude** | `AMP_API_KEY`, `AMP_SECRET_KEY`    | API credentials for data extraction.   |
+| **AWS**       | `AWS_ACCESS_KEY`, `AWS_SECRET_KEY` | Credentials for S3 loading.            |
+| **Storage**   | `BUCKET_NAME`                      | The target S3 bucket for data uploads. |
+
+### The Workflow Definition
+
+The following YAML defines the orchestration logic. It is stored within Kestra and can be triggered manually or via the built-in scheduler.
+
+```yaml
+id: amplitude
+namespace: des.amplitude
+
+tasks:
+  - id: wdir
+    type: io.kestra.plugin.core.flow.WorkingDirectory
+    tasks:
+      - id: hello
+        type: io.kestra.plugin.core.log.Log
+        message: "Starting Amplitude Extraction Pipeline... 🚀"
+
+      - id: clone
+        type: io.kestra.plugin.git.Clone
+        url: [https://github.com/dalycaolan/amplitude-extract-project](https://github.com/dalycaolan/amplitude-extract-project)
+        branch: modularising-script
+        username: "{{ kv('github_user')}}"
+        password: "{{ kv('github_token')}}"
+
+      - id: python_scripts
+        type: io.kestra.plugin.scripts.python.Commands
+        env:
+          AMP_API_KEY: "{{kv('AMP_API_KEY')}}"
+          AMP_SECRET_KEY: "{{kv('AMP_SECRET_KEY')}}"
+          AWS_ACCESS_KEY: "{{kv('AWS_ACCESS_KEY')}}"
+          AWS_SECRET_KEY: "{{kv('AWS_SECRET_KEY')}}"
+          BUCKET_NAME: "{{kv('BUCKET_NAME')}}"
+        beforeCommands:
+          - pip install -r requirements.txt
+        commands:
+          - echo "Packages installed, starting main script ☘️"
+          - python main.py
+          - echo "Files uploaded successfully ☘️☘️☘️"
+```
+
+---
+
 ## 🚀 Further Developments
 
 ### 🔄 Incremental Refresh
@@ -108,6 +173,8 @@ _Goal: Ensure data completeness._
 2.  After unzipping gzips, iterate through:
     - **If file already there:** Don't extract into `json_data` folder.
     - **If file not there:** Load in.
+
+---
 
 ## Contributions 📔
 
