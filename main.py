@@ -48,9 +48,9 @@ secret_key= os.getenv('AMP_SECRET_KEY')
 amp_region=os.getenv('AMP_DATA_REGION')
 
 # Read .env file
-aws_access_key=os.getenv('AWS_ACCESS_KEY')
-aws_secret_key=os.getenv('AWS_SECRET_KEY')
-aws_bucket_name=os.getenv('BUCKET_NAME')
+AWS_ACCESS_KEY=os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_KEY=os.getenv('AWS_SECRET_KEY')
+BUCKET_NAME=os.getenv('BUCKET_NAME')
 
 # Create S3 Client using AWS Credentials
 s3_client = boto3.client(
@@ -97,7 +97,7 @@ logger.info('Parameters defined')
 
 extract_function(params, url, api_key,secret_key)
 
-load_data()
+load_data(AWS_ACCESS_KEY, AWS_SECRET_KEY, BUCKET_NAME)
 
 
 # number_tries=0
