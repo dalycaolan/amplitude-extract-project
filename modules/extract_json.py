@@ -51,6 +51,8 @@ def unzip_and_store(file_path, file_date):
     # logger.info('gzip files succesfully parsed into JSON and loaded successfully :)')
 def extract_function(params, url, api_key,secret_key, count=0 ):
 
+    os.makedirs('data',exist_ok=True)
+
     while count<3:
 
         # Make the GET request with basic authentication
