@@ -107,17 +107,9 @@ def extract_function(params, url, api_key,secret_key, count=0 ):
 
             break
 
-def load_data():
+def load_data(aws_access_key,aws_secret_key,aws_bucket_name):
 
     # Retrieve .json files and upload json files to S3 bucket
-
-    # Load .env file
-    load_dotenv()
-
-    # Read .env file
-    aws_access_key=os.getenv('AWS_ACCESS_KEY')
-    aws_secret_key=os.getenv('AWS_SECRET_KEY')
-    aws_bucket_name=os.getenv('BUCKET_NAME')
 
     # Create S3 Client using AWS Credentials
     s3_client = boto3.client(
